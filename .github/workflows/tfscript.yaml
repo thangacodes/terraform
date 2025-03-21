@@ -1,4 +1,4 @@
-name: AWS Infras Deliver Using IaC (Terraform)
+name: AWS Infra Delivery Using IaC (Terraform)
 # on:
 #   push:
 #     branches:
