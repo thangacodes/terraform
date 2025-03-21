@@ -28,10 +28,11 @@ jobs:
           pwd
       - name: "Change to the directory and run the shell script"
         run: |
-          echo "Changing to the directory where the bootstrap script exists"
           pwd
           echo "Listing the files in $(pwd)"
           ls -la
-          # echo "Running the shell script"
-          # sh simple.sh
+          cd terraform_usecases/terraform_usecases/aws_terraform/conditional_based_ec2_creation
+          ls -l
+          echo "Running the shell script"
+          sh simple.sh
           
