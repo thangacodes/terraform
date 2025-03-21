@@ -19,15 +19,17 @@ jobs:
         run: |
           echo "The Author of this Git Repository is owned by:" ${{ env.Author}}
           echo "The Author is working for:" ${{ env.corp }}
-          echo "Company ${{ env.corp }} is use primary cloud as: ${{ env.primary_cloud }}"
-          echo "Company ${{ env.corp }} is use secondary cloud as: ${{ env.secondary_cloud }}"
-          echo "Company ${{ env.corp }} is use additional cloud as: ${{ env.additional_cloud }}"
+          echo "Company ${{ env.corp }} is use primary cloud as:" ${{ env.primary_cloud }}
+          echo "Company ${{ env.corp }} is use secondary cloud as:" ${{ env.secondary_cloud }}
+          echo "Company ${{ env.corp }} is use additional cloud as:" ${{ env.additional_cloud }}
           sleep 4
           echo "The actual script run begins shortly..."
-          echo "Changing to the directory where the bootstrap script exist"
-          cd conditional_based_ec2_creation
-          echo "list out the files $(pwd)"
+          pwd
           ls -lrt
-          echo "run the shell script"
-          sh simple.sh
+          # echo "Changing to the directory where the bootstrap script exist"
+          # cd conditional_based_ec2_creation
+          # echo "list out the files $(pwd)"
+          # ls -lrt
+          # echo "run the shell script"
+          # sh simple.sh
           
