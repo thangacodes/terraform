@@ -31,7 +31,7 @@ jobs:
           pwd
           echo "Listing the files in $(pwd)"
           ls -la
-          cd terraform_usecases/terraform_usecases/aws_terraform/conditional_based_ec2_creation
+          cd aws_terraform/conditional_based_ec2_creation
           ls -l
           echo "Running the shell script"
           sh simple.sh
