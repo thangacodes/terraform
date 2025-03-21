@@ -22,8 +22,7 @@ jobs:
           echo "Company ${{ env.corp }} is use primary cloud as:" ${{ env.primary_cloud }}
           echo "Company ${{ env.corp }} is use secondary cloud as:" ${{ env.secondary_cloud }}
           echo "Company ${{ env.corp }} is use additional cloud as:" ${{ env.additional_cloud }}
-          sleep 4
-          echo "The actual script run begins shortly..."
+          sleep 2
           pwd
       - name: "Change to the directory and run the shell script"
         run: |
@@ -31,8 +30,9 @@ jobs:
           ls -la
           pwd
           echo "changing the dir...."
-          /home/runner/work/terraform_usecases/terraform_usecases/aws_terraform/conditional_based_ec2_creation
-          cd terraform_usecases/aws_terraform/conditional_based_ec2_creation
+          pwd
+          cd aws_terraform/conditional_based_ec2_creation
+          pwd
           echo "Listing the files in $(pwd)"
           ls -lrt
           echo "Running the shell script"
