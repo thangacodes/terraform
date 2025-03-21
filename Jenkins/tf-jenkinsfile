@@ -7,7 +7,15 @@ pipeline {
         TFPLAN = 'terraform plan'
     }
     parameters {
-        choice(name: 'deployment_target', choices: ['dev-aws-account', 'stg-aws-account', 'prd-aws-account'], description: 'Select Deployment Target')
+        choice(
+            name: 'deployment_target',
+            choices: [
+                'dev-aws-account', 
+                'stg-aws-account', 
+                'prd-aws-account'
+            ], 
+            description: 'Select Deployment Target'
+        )
     }
     stages {
         stage('Initialize') {
@@ -63,7 +71,13 @@ pipeline {
     }
     post {
         always {
-            echo "Pipeline execution completed."
+             echo "Pipeline execution completed."
+        }
+        success {
+             echo "Pipeline completed successfully."
+        }
+        failure {
+             echo "Pipeline failed. Please check the console logs for errors."
         }
     }
 }
