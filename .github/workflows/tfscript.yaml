@@ -29,7 +29,7 @@ jobs:
       - name: "Change to the directory and run the shell script"
         run: |
           echo "Changing to the directory where the bootstrap script exists"
-          cd /home/runner/work/terraform_usecases/terraform_usecases/conditional_based_ec2_creation
+          cd aws_terraform/conditional_based_ec2_creation
           echo "Listing the files in $(pwd)"
           ls -lrt
           echo "Running the shell script"
