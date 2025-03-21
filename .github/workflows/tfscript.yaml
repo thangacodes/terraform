@@ -15,7 +15,7 @@ jobs:
   terraform_execution:
     runs-on: ubuntu-latest
     steps:
-      - name: "Hello, you are working at: ${{ env.corp }}"
+      - name: "About your employer: ${{ env.corp }}"
         run: |
           echo "The Author of this Git Repository is owned by:" ${{ env.Author}}
           echo "The Author is working for:" ${{ env.corp }}
@@ -25,10 +25,13 @@ jobs:
           sleep 4
           echo "The actual script run begins shortly..."
           pwd
-          ls -lrt
       - name: "Change to the directory and run the shell script"
         run: |
           echo "Changing to the directory where the bootstrap script exists"
+          ls -la
+          pwd
+          echo "changing the dir...."
+          /home/runner/work/terraform_usecases/terraform_usecases/aws_terraform/conditional_based_ec2_creation
           cd terraform_usecases/aws_terraform/conditional_based_ec2_creation
           echo "Listing the files in $(pwd)"
           ls -lrt
