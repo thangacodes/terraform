@@ -1,0 +1,69 @@
+pipeline {
+    agent linux
+    environment {
+        ACCOUNT_ID = ''
+        TFINIT = 'terraform init'
+        TFVALIDATE = 'terraform validate'
+        TFPLAN = 'terraform plan'
+    }
+    parameters {
+        choice(name: 'deployment_target', choices: ['dev-aws-account', 'stg-aws-account', 'prd-aws-account'], description: 'Select Deployment Target')
+    }
+    stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    // Define the getParameterOptions function
+                    def getParameterOptions = {
+                        switch (params['deployment_target']) {
+                            case 'dev-aws-account':
+                                env.ACCOUNT_ID = '345679845234'
+                                break
+                            case 'stg-aws-account':
+                                env.ACCOUNT_ID = '094834323456'
+                                break
+                            case 'prd-aws-account':
+                                env.ACCOUNT_ID = '0544834323456'
+                                break
+                        }
+                    }
+                    // Call the function to set the ACCOUNT_ID
+                    getParameterOptions()
+                    echo "Deployment Target: ${params.deployment_target}"
+                    echo "Account ID: ${env.ACCOUNT_ID}"
+                }
+            }
+        }
+        stage('Build & Terraform Initialization') {
+            steps {
+                echo "Deploying to account: ${env.ACCOUNT_ID}"
+                echo "You have chosen deployment target as: ${params.deployment_target}"
+                script {
+                    // Clone the repository and run terraform commands
+                    sh 'git clone https://github.com/thangacodes/terraform_usecases.git'
+                    dir('terraform_usecases/aws_terraform/conditional_based_ec2_creation') {
+                        echo "Terraform execution started"
+                        // Run Terraform commands in separate steps for better logging and error handling
+                        sh """
+                        echo 'Initializing Terraform...'
+                        ${env.TFINIT}
+                        """
+                        sh """
+                        echo 'Validating Terraform configuration...'
+                        ${env.TFVALIDATE}
+                        """
+                        sh """
+                        echo 'Generating Terraform plan...'
+                        ${env.TFPLAN}
+                        """
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo "Pipeline execution completed."
+        }
+    }
+}
