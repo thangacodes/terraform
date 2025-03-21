@@ -26,10 +26,12 @@ jobs:
           echo "The actual script run begins shortly..."
           pwd
           ls -lrt
-          # echo "Changing to the directory where the bootstrap script exist"
-          # cd conditional_based_ec2_creation
-          # echo "list out the files $(pwd)"
-          # ls -lrt
-          # echo "run the shell script"
-          # sh simple.sh
+      - name: "Change to the directory and run the shell script"
+        run: |
+          echo "Changing to the directory where the bootstrap script exists"
+          cd conditional_based_ec2_creation
+          echo "Listing the files in $(pwd)"
+          ls -lrt
+          echo "Running the shell script"
+          sh simple.sh
           
