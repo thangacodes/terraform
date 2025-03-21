@@ -8,10 +8,11 @@ on:
 env:
   Author: Td@try-devops.xyz
   corp: try-devops.xyz
-  primary_cloud: aws-cloud
-  secondary_cloud: azure-cloud
-  additional_cloud: VMware-cloud
+  primary_cloud: AWS Cloud
+  secondary_cloud: AZURE Cloud
+  additional_cloud: VMWARE Cloud
   script_path: cd aws_terraform/conditional_based_ec2_creation
+  shell_exec: sh simple.sh
 jobs:
   terraform_execution:
     runs-on: ubuntu-latest
@@ -32,5 +33,5 @@ jobs:
           echo "Listing the files on the dir: $(pwd)"
           ${{ env. script_path }}
           echo "Running the shell script"
-          sh simple.sh
+          ${{ env. shell_exec }}
           
