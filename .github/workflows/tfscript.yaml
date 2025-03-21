@@ -1,4 +1,4 @@
-name: AWS Infrastructure Provisioning using IaC (Terraform)
+name: AWS Infras Deliver Using IaC (Terraform)
 # on:
 #   push:
 #     branches:
@@ -11,28 +11,26 @@ env:
   primary_cloud: aws-cloud
   secondary_cloud: azure-cloud
   additional_cloud: VMware-cloud
+  script_path: cd aws_terraform/conditional_based_ec2_creation
 jobs:
   terraform_execution:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: "About your employer: ${{ env.corp }}"
+      - name: "About Employer: ${{ env.corp }}"
         run: |
           echo "The Author of this Git Repository is owned by:" ${{ env.Author}}
           echo "The Author is working for:" ${{ env.corp }}
-          echo "Company ${{ env.corp }} is use primary cloud as:" ${{ env.primary_cloud }}
-          echo "Company ${{ env.corp }} is use secondary cloud as:" ${{ env.secondary_cloud }}
-          echo "Company ${{ env.corp }} is use additional cloud as:" ${{ env.additional_cloud }}
+          echo "Company ${{ env.corp }} is using PRIMARY CLOUD as:" ${{ env.primary_cloud }}
+          echo "Company ${{ env.corp }} is using SECONDARY CLOUD as:" ${{ env.secondary_cloud }}
+          echo "Company ${{ env.corp }} is using ADDITIONAL CLOUD as:" ${{ env.additional_cloud }}
           sleep 2
           pwd
       - name: "Change to the directory and run the shell script"
         run: |
-          pwd
-          echo "Listing the files in $(pwd)"
-          ls -la
-          cd aws_terraform/conditional_based_ec2_creation
-          ls -l
+          echo "Listing the files on the dir: $(pwd)"
+          ${{ env. script_path }}
           echo "Running the shell script"
           sh simple.sh
           
