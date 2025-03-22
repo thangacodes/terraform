@@ -9,11 +9,11 @@ jobs:
     steps:
       - name: "Checking context variables"
         run: |
-          echo "Repository name: " ${{ github.repository }}
-          echo "Workflow name: " ${{ github.workflows }}
-          echo "Triggered by: " ${{ github.triggering_actor }}
-          echo "GitHub ref:" ${{ github.ref }}
-          ${{ github.action_path }}
-          ${{ github.action_repository }}
-          ${{ github.action_status }}
-          ${{ github.graphql_url }}
+          echo "Repository name: ${{ github.repository }}"
+          echo "Workflow name: ${{ github.workflow }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "GitHub ref: ${{ github.ref }}"
+          echo "Action path: ${{ github.action_path }}"
+          echo "Action repository: ${{ github.action_repository }}"
+          echo "Action status: ${{ github.action_status }}"
+          echo "GraphQL URL: ${{ github.graphql_url }}"
