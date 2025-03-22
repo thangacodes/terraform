@@ -27,7 +27,7 @@ pipeline {
         )
     }
     stages {
-        stage('aws_account') {
+        stage('Initialize') {
             steps {
                 script {
                     // Define the getParameterOptions function
@@ -51,31 +51,67 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Exec') {
+        stage('Terraform execution') {
             steps {
                 echo "Deploying to account: ${env.ACCOUNT_ID}"
                 echo "You have chosen deployment target as: ${params.deployment_target}"
                 script {
-                    // Clone the repository and run terraform commands
-                    sh 'git clone https://github.com/thangacodes/terraform_usecases.git'
-                    dir('terraform_usecases/aws_terraform/conditional_based_ec2_creation') {
-                        echo "Terraform execution started"
-                        // Run Terraform commands in separate steps for better logging and error handling
-                        sh """
-                        echo 'Initializing Terraform...'
-                        ${env.TFINIT}
-                        """
-                        sh """
-                        echo 'Validating Terraform configuration...'
-                        ${env.TFVALIDATE}
-                        """
-                        sh """
-                        echo 'Generating Terraform plan...'
-                        ${env.TFPLAN}
-                        """
-                    }
+                // Clone the repository and run terraform commands
+                sh 'git clone https://github.com/thangacodes/terraform_usecases.git'
+                dir('terraform_usecases/aws_terraform/conditional_based_ec2_creation') {
+                echo "Terraform execution started"
+                // User confirmation before running Terraform init
+                def initConfirmation = input(
+                    message: 'Do you want to run terraform init?',
+                    parameters: [
+                        choice(name: 'Run Init', choices: ['Yes', 'No'], description: 'Choose Yes to run terraform init or No to skip')
+                    ]
+                )
+                if (initConfirmation == 'Yes') {
+                    sh """
+                    echo 'Initializing Terraform...'
+                    ${env.TFINIT}
+                    """
+                } 
+                else {
+                    echo 'Skipping terraform init.'
+                }
+                // User confirmation before running Terraform validate
+                def validateConfirmation = input(
+                    message: 'Do you want to run terraform validate?',
+                    parameters: [
+                        choice(name: 'Run Validate', choices: ['Yes', 'No'], description: 'Choose Yes to run terraform validate or No to skip')
+                    ]
+                )
+                if (validateConfirmation == 'Yes') {
+                    sh """
+                    echo 'Validating Terraform configuration...'
+                    ${env.TFVALIDATE}
+                    """
+                } 
+                else {
+                    echo 'Skipping terraform validate.'
+                }
+
+                // User confirmation before running Terraform plan
+                def planConfirmation = input(
+                    message: 'Do you want to run terraform plan?',
+                    parameters: [
+                        choice(name: 'Run Plan', choices: ['Yes', 'No'], description: 'Choose Yes to run terraform plan or No to skip')
+                    ]
+                )
+                if (planConfirmation == 'Yes') {
+                    sh """
+                    echo 'Generating Terraform plan...'
+                    ${env.TFPLAN}
+                    """
+                } 
+                else {
+                    echo 'Skipping terraform plan.'
                 }
             }
+        }
+        }
         }
     }
     post {
