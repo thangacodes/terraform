@@ -1,0 +1,17 @@
+name: Unix Shell script execution
+on:
+  workflow_dispatch
+env:
+  title: shell_script execution
+  author: td@try-devops.xyz
+jobs:
+  script_execution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: stage-1
+        run: |
+          echo "Title of the workflow is: "${{ env.title }}
+          echo "Author of this project is: "${{ env.author }}
+          echo "linux command execution"
+          whoami; pwd ; uname -a
+  
