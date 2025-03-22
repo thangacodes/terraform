@@ -1,12 +1,21 @@
 pipeline {
-    agent linux
+    agent any
     environment {
         ACCOUNT_ID = ''
-        TFINIT = 'terraform init'
-        TFVALIDATE = 'terraform validate'
-        TFPLAN = 'terraform plan'
+        TFINIT = '/opt/homebrew/bin/terraform init'
+        TFVALIDATE = '/opt/homebrew/bin/terraform validate'
+        TFPLAN = '/opt/homebrew/bin/terraform plan'
     }
     parameters {
+        choice(
+            name: 'environment',
+            choices: [
+                'dev', 
+                'stage', 
+                'prod'
+            ], 
+            description: 'Select Environment'
+        )
         choice(
             name: 'deployment_target',
             choices: [
@@ -71,13 +80,13 @@ pipeline {
     }
     post {
         always {
-             echo "Pipeline execution completed."
+            echo "Pipeline execution completed."
         }
         success {
-             echo "Pipeline completed successfully."
+            echo "Pipeline completed successfully."
         }
         failure {
-             echo "Pipeline failed. Please check the console logs for errors."
+            echo "Pipeline failed. Please check the console logs for errors."
         }
     }
 }
