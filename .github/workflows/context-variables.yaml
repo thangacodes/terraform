@@ -13,7 +13,6 @@ jobs:
           echo "Workflow name: " ${{ github.workflows }}
           echo "Triggered by: " ${{ github.triggering_actor }}
           echo "GitHub ref:" ${{ github.ref }}
-          ${{ github.action }}
           ${{ github.action_path }}
           ${{ github.action_repository }}
           ${{ github.action_status }}
