@@ -1,20 +1,18 @@
 name: AWS Infra Delivery Using IaC (Terraform)
-# on:
-#   push:
-#     branches:
-#       - main
+
 on:
   workflow_dispatch
+
 env:
-  Author: Td@try-devops.xyz
+  Author: admin@try-devops.xyz
   corp: try-devops.xyz
   primary_cloud: AWS Cloud
   secondary_cloud: AZURE Cloud
   additional_cloud: VMWARE Cloud
-  script_path: cd aws_terraform/conditional_based_ec2_creation
+  script_path: aws_terraform/conditional_based_ec2_creation
   shell_exec: sh simple.sh
 jobs:
-  terraform_execution:
+  env_variable_checking:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,12 +24,17 @@ jobs:
           echo "Company ${{ env.corp }} is using PRIMARY CLOUD as:" ${{ env.primary_cloud }}
           echo "Company ${{ env.corp }} is using SECONDARY CLOUD as:" ${{ env.secondary_cloud }}
           echo "Company ${{ env.corp }} is using ADDITIONAL CLOUD as:" ${{ env.additional_cloud }}
-          sleep 2
-          pwd
+  tf_execution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: "Change to the directory and run the shell script"
         run: |
-          echo "Listing the files on the dir: $(pwd)"
-          ${{ env. script_path }}
+          echo "Listing the files in the current directory: $(pwd)"
+          cd ${{ env.script_path }}  # Change to the specified directory
+          echo "Current directory: $(pwd)"
           echo "Running the shell script"
-          ${{ env. shell_exec }}
+          ${{ env.shell_exec }}  
           
