@@ -1,4 +1,4 @@
-name: Testing Context variables
+name: Default Context variables printing
 on: 
   workflow_dispatch
 env:
@@ -13,11 +13,10 @@ jobs:
           echo "Workflow name: ${{ github.workflow }}"
           echo "Triggered by: ${{ github.actor }}"
           echo "GitHub ref: ${{ github.ref }}"
-          echo "Action path: ${{ github.action_path }}"
-          echo "Action repository: ${{ github.action_repository }}"
-          echo "Action status: ${{ github.action_status }}"
           echo "GraphQL URL: ${{ github.graphql_url }}"
           echo "Github repo: ${{ github.repository }}"
           echo "Github workspace: ${{ github.workspace }}"
           echo "Github server URL: ${{ github.server_url }}"
           echo "Repository owner name is: ${{ github.repository_owner }}"
+          echo "GitHub repository id is: ${{ github.repository_id }}"
+          echo "GitHub retention days: ${{ github.retention_days }}"
