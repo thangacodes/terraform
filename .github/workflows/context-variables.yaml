@@ -19,3 +19,5 @@ jobs:
           echo "GraphQL URL: ${{ github.graphql_url }}"
           echo "Github repo: ${{ github.repository }}"
           echo "Github workspace: ${{ github.workspace }}"
+          echo "Github server URL: ${{ github.server_url }}"
+          echo "Repository owner name is: ${{ github.repository_owner }}"
