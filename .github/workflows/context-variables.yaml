@@ -7,6 +7,9 @@ jobs:
   test_context_variables:
     runs-on: ubuntu-latest
     steps:
+      - name: "environment variables priting"
+        run: |
+          echo "Hard coded env variable is: ${{ env.Author }}"
       - name: "Checking context variables"
         run: |
           echo "Repository name: ${{ github.repository }}"
