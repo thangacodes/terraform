@@ -17,3 +17,5 @@ jobs:
           echo "Action repository: ${{ github.action_repository }}"
           echo "Action status: ${{ github.action_status }}"
           echo "GraphQL URL: ${{ github.graphql_url }}"
+          echo "Github repo: ${{ github.repository }}"
+          echo "Github workspace: ${{ github.workspace }}"
