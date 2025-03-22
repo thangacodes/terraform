@@ -27,7 +27,7 @@ pipeline {
         )
     }
     stages {
-        stage('Initialize') {
+        stage('aws_account') {
             steps {
                 script {
                     // Define the getParameterOptions function
@@ -51,7 +51,7 @@ pipeline {
                 }
             }
         }
-        stage('Build & Terraform Initialization') {
+        stage('Terraform Exec') {
             steps {
                 echo "Deploying to account: ${env.ACCOUNT_ID}"
                 echo "You have chosen deployment target as: ${params.deployment_target}"
