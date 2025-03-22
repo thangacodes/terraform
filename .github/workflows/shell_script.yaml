@@ -13,5 +13,5 @@ jobs:
           echo "Title of the workflow is: "${{ env.title }}
           echo "Author of this project is: "${{ env.author }}
           echo "linux command execution"
-          whoami; pwd ; uname -a
+          whoami; pwd ; uname -a ; ls -ltr
   
