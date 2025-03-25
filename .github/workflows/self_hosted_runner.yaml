@@ -1,0 +1,29 @@
+name: AWS Infra provision via GitHub Actions
+on:
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - master
+  workflow_dispatch:  # Allows manual trigger
+env:
+  Date: "25/03/2025"
+  Author: "td@try-devops.xyz"
+  Project: "TFPROJECT"
+  GHACTION_DIR: "/home/ec2-user/scm"
+  GITREPO: "https://github.com/thangacodes/terraform-usecases.git"
+  REPONAME: "terraform-usecases"
+jobs:
+  build:
+    runs-on: self-hosted-machine  # Use the label of your self-hosted runner
+    steps:
+    - name: Setup custom directory
+      run: |
+        mkdir -p ${{ env.GHACTION_DIR }}
+        cd ${{ env.GHACTION_DIR }}
+        git clone ${{ env.GITREPO }}
+    - name: Execute custom init script
+      run: |
+        cd ${{ env.GHACTION_DIR }}/${{ env.REPONAME }}
+        sh simple.sh
