@@ -13,7 +13,7 @@ env:
   Author: "td@try-devops.xyz"
   Project: "TFPROJECT"
   GHACTION_DIR: "/home/ec2-user/scm"
-  GITREPO: "https://github.com/thangacodes/terraform-usecases.git"
+  GITREPO: "https://github.com/thangacodes/terraform_usecases.git"
   REPONAME: "terraform-usecases"
 jobs:
   build:
