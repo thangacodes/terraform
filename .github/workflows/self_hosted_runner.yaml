@@ -12,9 +12,7 @@ env:
   Date: "25/03/2025"
   Author: "td@try-devops.xyz"
   Project: "TFPROJECT"
-  GHACTION_DIR: "home/runner/work"
   GITREPO: "https://github.com/thangacodes/terraform_usecases.git"
-  REPONAME: "terraform-usecases/terraform-usecases"
 jobs:
   build:
     runs-on: ubuntu-latest  # Use the label of your self-hosted runner
@@ -22,12 +20,11 @@ jobs:
     - name: Setup custom directory
       run: |
         pwd
-        sleep 2 
-        exit 0
-        cd ${{ env.GHACTION_DIR }}
         git clone ${{ env.GITREPO }}
     - name: Execute custom init script
       run: |
-        cd ${{ env.GHACTION_DIR }}/${{ env.REPONAME }}
+        echo "checking the path"
+        pwd
+        ls -la
         sh simple.sh
 
