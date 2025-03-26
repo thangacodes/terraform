@@ -1,11 +1,12 @@
 name: AWS Infra provision via GitHub Actions
+# on:
+#   # push:
+#   #   branches: 
+#   #     - master
+#   # pull_request:
+#   #   branches: 
+#   #     - master
 on:
-  push:
-    branches: 
-      - master
-  pull_request:
-    branches: 
-      - master
   workflow_dispatch:
 env:
   Date: "25/03/2025"
