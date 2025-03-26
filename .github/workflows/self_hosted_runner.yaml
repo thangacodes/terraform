@@ -1,4 +1,4 @@
-name: AWS Infra provision via GitHub Actions
+name: self-hosted-runner
 # on:
 #   # push:
 #   #   branches: 
@@ -12,7 +12,7 @@ env:
   Date: "25/03/2025"
   Author: "td@try-devops.xyz"
   Project: "TFPROJECT"
-  GHACTION_DIR: "/home/ec2-user/scm"
+  GHACTION_DIR: "sudo /home/ec2-user/scm"
   GITREPO: "https://github.com/thangacodes/terraform-usecases.git"
   REPONAME: "terraform-usecases"
 jobs:
