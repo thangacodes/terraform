@@ -26,5 +26,7 @@ jobs:
         echo "checking the path"
         pwd
         ls -la
+        echo "navigating to the cloned repo"
+        cd terraform_usecases
         sh simple.sh
 
