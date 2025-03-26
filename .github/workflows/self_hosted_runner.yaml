@@ -21,10 +21,14 @@ jobs:
     steps:
     - name: Setup custom directory
       run: |
-        mkdir -p ${{ env.GHACTION_DIR }}
-        cd ${{ env.GHACTION_DIR }}
-        git clone ${{ env.GITREPO }}
-    - name: Execute custom init script
-      run: |
-        cd ${{ env.GHACTION_DIR }}/${{ env.REPONAME }}
-        sh simple.sh
+        pwd
+        sleep 2 
+        exit 0
+        # mkdir -p ${{ env.GHACTION_DIR }}
+        # cd ${{ env.GHACTION_DIR }}
+        # git clone ${{ env.GITREPO }}
+    # - name: Execute custom init script
+    #   run: |
+    #     cd ${{ env.GHACTION_DIR }}/${{ env.REPONAME }}
+    #     sh simple.sh
+
