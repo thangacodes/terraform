@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: 
       - master
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:
 env:
   Date: "25/03/2025"
   Author: "td@try-devops.xyz"
@@ -16,7 +16,7 @@ env:
   REPONAME: "terraform-usecases"
 jobs:
   build:
-    runs-on: self-hosted-machine  # Use the label of your self-hosted runner
+    runs-on: ubuntu-latest  # Use the label of your self-hosted runner
     steps:
     - name: Setup custom directory
       run: |
