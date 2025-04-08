@@ -1,0 +1,5 @@
+region         = "ap-south-1"
+shared_profile = "vault_admin"
+role_name      = "admin_role"
+account_id     = "001526987415"
+iamuser        = "siju"
