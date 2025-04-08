@@ -12,3 +12,7 @@ terraform plan                      //shows that what changes Terraform will mak
 terraform apply --auto-approve     //applies the changes to your infrastructure automatically without prompting you for approval.
 terraform destroy --auto-approve  //destroys all the resources that were created by the Terraform configuration, again automatically without approval
 terraform state list             //lists all the resources currently tracked by Terraform in the state file.
+
+Instead of running the Terraform commands one after another, simply run the "init_script.sh" file using the method below,
+
+sh init_script.sh
