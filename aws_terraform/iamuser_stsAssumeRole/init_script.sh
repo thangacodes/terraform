@@ -4,8 +4,8 @@ ask_user() {
     while true; do
         read -p "$1 (yes/no): " choice
         case $choice in
-            [Yy]* ) return 0;;  # Yes
-            [Nn]* ) return 1;;  # No
+            [Yy] | [YESyes]* ) return 0;;  # Yes
+            [Nn] | [NOno]* ) return 1;;  # No
             * ) echo "Please answer yes or no.";;
         esac
     done
