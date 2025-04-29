@@ -2,8 +2,7 @@
 
 # Folder Structure:
 
-![image](https://github.com/user-attachments/assets/c737f1fa-9d83-416f-9ddd-c0d9ad38235c)
-
+<img src="https://github.com/user-attachments/assets/c737f1fa-9d83-416f-9ddd-c0d9ad38235c" width="200" height="200" />
 
 # How to clone and run this IaC script:
 
