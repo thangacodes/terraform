@@ -1,25 +1,3 @@
-# modules/app-alb/main.tf
-
-resource "aws_security_group" "alb_sg" {
-  name        = "alb-sg"
-  description = "Allow HTTP traffic"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_lb" "app_lb" {
   name               = "app-lb"
   internal           = false
@@ -59,7 +37,6 @@ resource "aws_lb_listener" "http" {
 
 resource "aws_lb_target_group_attachment" "tg_attachment" {
   for_each = var.instance_map
-
   target_group_arn = aws_lb_target_group.app_tg.arn
   target_id        = each.value
   port             = 80
