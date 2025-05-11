@@ -1,6 +1,10 @@
-output "alb_dns_name" {
+output "http_alb_dns_name" {
   description = "DNS name of the Application Load Balancer"
-  value       = aws_lb.app_lb.dns_name
+  value       = "http://${aws_lb.app_lb.dns_name}"
+}
+output "https_alb_dns_name" {
+  description = "DNS name of the Application Load Balancer"
+  value       = "https://${aws_lb.app_lb.dns_name}"
 }
 output "alb_arn" {
   description = "ARN of the Application Load Balancer"
