@@ -1,20 +1,5 @@
 This repository contains a fleet of VMs with Apache web servers deployed, configured to serve a static page accessible via an ALB endpoint..
 
 # Tree structure of the file
-.
-├── app-alb
-│   ├── main.tf
-│   ├── outputs.tf
-│   └── variables.tf
-├── main.tf
-├── outputs.tf
-├── providers.tf
-├── terraform.tfvars
-├── variables.tf
-└── vm
-    ├── ec2.tf
-    ├── init_script.sh
-    ├── outputs.tf
-    └── variables.tf
+![image](https://github.com/user-attachments/assets/cf6534fb-643e-475f-940a-c4a86b3d42b5)
 
-3 directories, 12 files
