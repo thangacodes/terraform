@@ -1,7 +1,7 @@
 #!/bin/bash
 LOGFILE="/tmp/$(hostname).log"
 {
-  echo "==== Script started at $(date) ===="
+  echo "==== Script started at: $(date '+%d-%m-%Y %H:%M:%S') ===="
   echo "Sleeping for 60 seconds..."
   sleep 60
   echo "Running yum update..."
