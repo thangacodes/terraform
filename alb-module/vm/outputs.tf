@@ -8,6 +8,6 @@ output "vmpvtip" {
 output "instance_id_map" {
   value = {
     for idx, id in aws_instance.web-vm[*].id :
-    "web-${idx + 1}" => id
+    "webserver-${idx + 1}" => id
   }
 }
