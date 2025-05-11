@@ -15,8 +15,11 @@ This repository contains a fleet of VMs with Apache web servers deployed, config
 3. Initialize and deploy with Terraform
 
    terraform init
+   
    terraform validate
+   
    terraform plan
+   
    terraform apply --auto-approve
 
 
