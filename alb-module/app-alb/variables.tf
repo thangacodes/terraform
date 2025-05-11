@@ -1,5 +1,3 @@
-# modules/app-alb/variables.tf
-
 variable "security_groups" {
   description = "Security groups for ALB"
   type        = list(string)
