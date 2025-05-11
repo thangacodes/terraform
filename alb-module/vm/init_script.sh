@@ -25,5 +25,5 @@ LOGFILE="/tmp/$(hostname).log"
   </body>
 </html>
 EOF
-  echo "==== Script completed at $(date) ===="
+  echo "==== Script completed at: $(date '+%d-%m-%Y %H:%M:%S') ===="
 } >> "$LOGFILE" 2>&1
