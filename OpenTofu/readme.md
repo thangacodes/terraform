@@ -30,3 +30,13 @@ tofu --help
 ```
 To learn more about
 [OpenTofu Doc](https://opentofu.org/docs/intro/)
+
+```bash
+Project folder Structure:
+File Name         Purpose
+main.tf           Main configuration file containing resource definition
+variables.tf      Contains variable declarations
+outputs.tf        Contains outputs from resources
+provider.tf       Contains Provider definition
+opentofu.tf       Configures OpenTofu behaviour
+```
