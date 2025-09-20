@@ -28,3 +28,5 @@ Main commands:
 All other commands to check, run the command below,
 tofu --help
 ```
+To learn more about
+[OpenTofu Doc](https://opentofu.org/docs/intro/)
