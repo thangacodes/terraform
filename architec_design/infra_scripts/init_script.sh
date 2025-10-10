@@ -82,5 +82,6 @@ fi
 systemctl daemon-reload
 systemctl enable fastapi.service
 systemctl start fastapi.service
+systemctl status fastapi.service
 
 echo "FastAPI setup completed at:" $(date '+%y-%m-%d %H:%M:%S')
