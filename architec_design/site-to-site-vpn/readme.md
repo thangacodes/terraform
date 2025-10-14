@@ -4,10 +4,6 @@ AWS Site-to-Site VPN connection:
 
 This architecture diagram represents an AWS Site-to-Site VPN connection between an AWS Virtual Private Cloud (VPC) and an On-Premise Network.
 
-```
-
-```bash
-
 AWS Side Components:
 ====================
 
@@ -18,8 +14,8 @@ VPC:
   * A logically isolated network in AWS where your resources such as EC2 instances reside.
 
 Subnet:
-* Subnets divide the VPC into smaller network segments for resource organization.
-* In general, subnets are created inside Availability Zones for high availability.
+  * Subnets divide the VPC into smaller network segments for resource organization.
+  * In general, subnets are created inside Availability Zones for high availability.
 
 Router: This routes traffic between the subnets and the Virtual Private Gateway.
 
