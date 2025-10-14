@@ -1,12 +1,12 @@
 ```bash
 
 AWS Site-to-Site VPN connection:
+===============================
 
 This architecture diagram represents an AWS Site-to-Site VPN connection between an AWS Virtual Private Cloud (VPC) and an On-Premise Network.
 
 AWS Side Components:
 ====================
-
 Region:
    * This is the AWS geographical region where the resources are deployed.
 
