@@ -2,12 +2,12 @@
 echo "Deployment of FastAPI setup on Amazon Linux 2023 at:" $(date '+%y-%m-%d %H:%M:%S')
 
 # Log output to file appending
-exec > >(tee /var/log/fastapi_setup.log) 2>&1
+exec > >(tee /tmp/log/fastapi_setup.log) 2>&1
 
 # Update packages
 dnf update -y
 
-# Install required tools
+# Install required tool packages
 dnf install -y python3 python3-pip git curl
 
 # Symlink python to python3 if needed
