@@ -29,8 +29,11 @@ VPN Connection:
 On-Premise Side Components:
 ===========================
 Customer Gateway:
-  * This is the physical or software router on your on-premise side that communicates with AWS's Virtual Private Gateway.
+  * This is the physical or software router on your on-premise side that communicates with AWS Virtual Private Gateway.
 
 On-Premise Network:
-  * Your organization’s internal network which will communicate securely with AWS over the VPN.
+  * This is On-prem network which will communicate securely with AWS over the VPN.
+
+```
+
 ```
