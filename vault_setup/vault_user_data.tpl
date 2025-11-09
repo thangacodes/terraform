@@ -4,20 +4,20 @@ set -e
 LOG_FILE="/tmp/vault_installation.log"
 exec > >(tee -a $LOG_FILE) 2>&1
 
-echo "==> Installing prerequisites..."
+echo "==> Installing prerequisites <=="
 sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum install -y vault
 
-echo "==> Creating Vault directories..."
+echo "==> Creating Vault directories <=="
 sudo mkdir -p /etc/vault.d /opt/vault/data
 sudo chown -R vault:vault /opt/vault
 sudo chmod -R 750 /opt/vault
 
-echo "==> Fetching public IP..."
+echo "==> Fetching public IP <=="
 PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 
-echo "==> Writing Vault configuration..."
+echo "==> Writing Vault configuration <=="
 cat <<VAULTCFG | sudo tee /etc/vault.d/vault.hcl
 ui = true
 disable_mlock = true
