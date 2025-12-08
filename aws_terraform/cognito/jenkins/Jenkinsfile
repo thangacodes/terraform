@@ -119,12 +119,10 @@ pipeline {
     }
 
     post {
-        always {
-            echo "Cleaning up environment variables..."
-        }
         success { echo "Pipeline completed successfully for ${params.ENVIRONMENT}" }
         failure { echo "Pipeline failed. Check logs." }
     }
 }
+
 
 
