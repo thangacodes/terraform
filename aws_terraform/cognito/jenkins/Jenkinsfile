@@ -1,136 +1,140 @@
 pipeline {
-  agent any
+    agent any
 
-  options {
-    buildDiscarder(logRotator(numToKeepStr: '3'))
-    timestamps()
-    timeout(time: 45, unit: 'MINUTES')
-  }
-
-  parameters {
-    string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'dev | qa | prod')
-    booleanParam(name: 'RUN_APPLY', defaultValue: false, description: 'Run terraform apply?')
-    booleanParam(name: 'RUN_DESTROY', defaultValue: false, description: 'Run terraform destroy?')
-  }
-
-  environment {
-    TF_BACKEND_BUCKET = 'testing-epa-application-bucket19112025'
-    TF_BACKEND_REGION = 'ap-south-1'
-    TF_BACKEND_KEY_BASE = 'cognito-identity-setup'
-    TF_PLAN_FILE = 'tfplan.binary'
-    TF_FOLDER = 'aws_terraform/cognito/cog_tf'
-    TF_IN_AUTOMATION = 'true'
-  }
-
-  stages {
-    stage('Checkout Repo') {
-      steps {
-        echo "Checking out SCM..."
-        checkout scm
-        script {
-          env.TF_BACKEND_KEY = "${TF_BACKEND_KEY_BASE}/${params.ENVIRONMENT}/terraform.tfstate"
-        }
-      }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+        timestamps()
+        timeout(time: 45, unit: 'MINUTES')
     }
 
-    stage('Terraform Init') {
-      steps {
-        dir(env.TF_FOLDER) {
-          echo "Initializing Terraform..."
-          sh '''
-            terraform init \
-              -backend-config="bucket=${TF_BACKEND_BUCKET}" \
-              -backend-config="key=${TF_BACKEND_KEY}" \
-              -backend-config="region=${TF_BACKEND_REGION}" \
-              -input=false
-          '''
-        }
-      }
+    parameters {
+        string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'dev | qa | prod')
+        booleanParam(name: 'RUN_APPLY', defaultValue: false, description: 'Run terraform apply?')
+        booleanParam(name: 'RUN_DESTROY', defaultValue: false, description: 'Run terraform destroy?')
     }
 
-    stage('Format & Validate') {
-      steps {
-        dir(env.TF_FOLDER) {
-          script {
-            echo "Checking Terraform formatting..."
-            def fmtResult = sh(script: "terraform fmt -check -recursive", returnStatus: true)
-            if (fmtResult != 0) {
-              echo "WARNING: Terraform files are not properly formatted!"
-              currentBuild.result = 'UNSTABLE'
-            } else {
-              echo "Terraform files are properly formatted."
+    environment {
+        TF_BACKEND_BUCKET = 'testing-epa-application-bucket19112025'
+        TF_BACKEND_REGION = 'ap-south-1'
+        TF_BACKEND_KEY_BASE = 'cognito-identity-setup'
+        TF_PLAN_FILE = 'tfplan.binary'
+        TF_FOLDER = 'aws_terraform/cognito/cog_tf'
+        TF_IN_AUTOMATION = 'true'
+    }
+
+    stages {
+
+        stage('Checkout Repo') {
+            steps {
+                echo "Checking out SCM..."
+                checkout scm
+                script {
+                    env.TF_BACKEND_KEY = "${TF_BACKEND_KEY_BASE}/${params.ENVIRONMENT}/terraform.tfstate"
+                }
             }
-
-            echo "Validating Terraform..."
-            sh "terraform validate -no-color"
-          }
         }
-      }
+
+        stage('Terraform Init') {
+            steps {
+                dir(env.TF_FOLDER) {
+                    echo "Initializing Terraform backend..."
+                    sh '''
+                        terraform init -reconfigure \
+                          -backend-config="bucket=${TF_BACKEND_BUCKET}" \
+                          -backend-config="key=${TF_BACKEND_KEY}" \
+                          -backend-config="region=${TF_BACKEND_REGION}" \
+                          -input=false
+                    '''
+                }
+            }
+        }
+
+        stage('Format & Validate') {
+            steps {
+                dir(env.TF_FOLDER) {
+                    script {
+                        echo "Checking Terraform formatting..."
+                        def fmtResult = sh(script: "terraform fmt -check -recursive", returnStatus: true)
+                        if (fmtResult != 0) {
+                            echo "WARNING: Terraform files are not properly formatted!"
+                            currentBuild.result = 'UNSTABLE'
+                        } else {
+                            echo "Terraform files are properly formatted."
+                        }
+
+                        echo "Validating Terraform..."
+                        sh "terraform validate -no-color"
+                    }
+                }
+            }
+        }
+
+        stage('Plan') {
+            steps {
+                // Optional: Remove lock if Locks and Latches plugin is not installed
+                // lock(resource: "tf-${params.ENVIRONMENT}") {
+                dir(env.TF_FOLDER) {
+                    echo "Selecting Terraform workspace and planning..."
+                    sh '''
+                        terraform workspace new ${ENVIRONMENT} || terraform workspace select ${ENVIRONMENT}
+                        terraform plan -out=${TF_PLAN_FILE} -input=false
+                        terraform show -json ${TF_PLAN_FILE} > plan.json
+                    '''
+                }
+                archiveArtifacts artifacts: "${env.TF_FOLDER}/plan.json"
+                // }
+            }
+        }
+
+        stage('Approval for Production Apply') {
+            when { expression { params.RUN_APPLY && params.ENVIRONMENT == 'prod' } }
+            steps {
+                input message: "Approve Terraform APPLY for PRODUCTION?"
+            }
+        }
+
+        stage('Apply') {
+            when { expression { params.RUN_APPLY && !params.RUN_DESTROY } }
+            steps {
+                // lock(resource: "tf-${params.ENVIRONMENT}") {
+                dir(env.TF_FOLDER) {
+                    echo "Applying Terraform plan..."
+                    sh '''
+                        terraform apply -auto-approve -input=false ${TF_PLAN_FILE}
+                    '''
+                }
+                // }
+            }
+        }
+
+        stage('Destroy (Gated)') {
+            when { expression { params.RUN_DESTROY } }
+            steps {
+                script {
+                    input message: "CONFIRM DESTROY for ${params.ENVIRONMENT}?"
+                }
+                // lock(resource: "tf-${params.ENVIRONMENT}") {
+                dir(env.TF_FOLDER) {
+                    echo "Destroying Terraform resources..."
+                    sh '''
+                        terraform destroy -auto-approve -input=false
+                    '''
+                }
+                // }
+            }
+        }
     }
 
-    stage('Plan') {
-      steps {
-        lock(resource: "tf-${params.ENVIRONMENT}") {
-          dir(env.TF_FOLDER) {
-            echo "Selecting Terraform workspace..."
+    post {
+        always {
+            echo "Cleaning up environment variables..."
             sh '''
-              terraform workspace new ${ENVIRONMENT} || terraform workspace select ${ENVIRONMENT}
-              terraform plan -out=${TF_PLAN_FILE} -input=false
-              terraform show -json ${TF_PLAN_FILE} > plan.json
+                unset AWS_ACCESS_KEY_ID || true
+                unset AWS_SECRET_ACCESS_KEY || true
+                unset AWS_SESSION_TOKEN || true
             '''
-          }
-          archiveArtifacts artifacts: "${env.TF_FOLDER}/plan.json"
         }
-      }
+        success { echo "Pipeline completed successfully for ${params.ENVIRONMENT}" }
+        failure { echo "Pipeline failed. Check logs." }
     }
-
-    stage('Approval for Production Apply') {
-      when { expression { params.RUN_APPLY && params.ENVIRONMENT == 'prod' } }
-      steps {
-        input message: "Approve Terraform APPLY for PRODUCTION?"
-      }
-    }
-
-    stage('Apply') {
-      when { expression { params.RUN_APPLY && !params.RUN_DESTROY } }
-      steps {
-        lock(resource: "tf-${params.ENVIRONMENT}") {
-          dir(env.TF_FOLDER) {
-            echo "Applying Terraform plan..."
-            sh '''
-              terraform apply -auto-approve -input=false ${TF_PLAN_FILE}
-            '''
-          }
-        }
-      }
-    }
-
-    stage('Destroy (Gated)') {
-      when { expression { params.RUN_DESTROY } }
-      steps {
-        script { input message: "CONFIRM DESTROY for ${params.ENVIRONMENT}?" }
-        lock(resource: "tf-${params.ENVIRONMENT}") {
-          dir(env.TF_FOLDER) {
-            echo "Destroying Terraform resources..."
-            sh '''
-              terraform destroy -auto-approve -input=false
-            '''
-          }
-        }
-      }
-    }
-  }
-
-  post {
-    always {
-      echo "Cleaning up environment variables..."
-      sh '''
-        unset AWS_ACCESS_KEY_ID || true
-        unset AWS_SECRET_ACCESS_KEY || true
-        unset AWS_SESSION_TOKEN || true
-      '''
-    }
-    success { echo "Pipeline completed successfully for ${params.ENVIRONMENT}" }
-    failure { echo "Pipeline failed. Check logs." }
-  }
 }
