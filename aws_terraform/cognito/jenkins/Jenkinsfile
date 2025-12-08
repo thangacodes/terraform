@@ -1,6 +1,5 @@
 pipeline {
-
-  agent any 
+  agent any
 
   options {
     buildDiscarder(logRotator(numToKeepStr: '3'))
@@ -12,7 +11,6 @@ pipeline {
     string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'dev | qa | prod')
     booleanParam(name: 'RUN_APPLY', defaultValue: false, description: 'Run terraform apply?')
     booleanParam(name: 'RUN_DESTROY', defaultValue: false, description: 'Run terraform destroy?')
-    string(name: 'ASSUME_ROLE_ARN', defaultValue: '', description: 'Optional: Assume this role before running Terraform')
   }
 
   environment {
@@ -27,52 +25,57 @@ pipeline {
   stages {
     stage('Checkout Repo') {
       steps {
+        echo "Checking out SCM..."
         checkout scm
         script {
           env.TF_BACKEND_KEY = "${TF_BACKEND_KEY_BASE}/${params.ENVIRONMENT}/terraform.tfstate"
         }
       }
     }
+
     stage('Terraform Init') {
       steps {
         dir(env.TF_FOLDER) {
+          echo "Initializing Terraform..."
           sh '''
             terraform init \
               -backend-config="bucket=${TF_BACKEND_BUCKET}" \
               -backend-config="key=${TF_BACKEND_KEY}" \
-              -backend-config="region=${TF_BACKEND_REGION}"
+              -backend-config="region=${TF_BACKEND_REGION}" \
+              -input=false
           '''
         }
       }
     }
-    stage('Format & Validate') {
-       steps {
-    dir(env.TF_FOLDER) {
-      script {
-        // Run terraform fmt -check and capture exit code
-        def fmtResult = sh(script: "terraform fmt -check -recursive", returnStatus: true)
-        
-        if (fmtResult != 0) {
-          echo "WARNING: Terraform files are not properly formatted!"
-          // Optional: mark the build as unstable but continue
-          currentBuild.result = 'UNSTABLE'
-        } else {
-          echo "Terraform files are properly formatted."
-        }
 
-        // Always run validate
-        sh "terraform validate"
+    stage('Format & Validate') {
+      steps {
+        dir(env.TF_FOLDER) {
+          script {
+            echo "Checking Terraform formatting..."
+            def fmtResult = sh(script: "terraform fmt -check -recursive", returnStatus: true)
+            if (fmtResult != 0) {
+              echo "WARNING: Terraform files are not properly formatted!"
+              currentBuild.result = 'UNSTABLE'
+            } else {
+              echo "Terraform files are properly formatted."
+            }
+
+            echo "Validating Terraform..."
+            sh "terraform validate -no-color"
+          }
+        }
       }
     }
-  }
-}
+
     stage('Plan') {
       steps {
         lock(resource: "tf-${params.ENVIRONMENT}") {
           dir(env.TF_FOLDER) {
+            echo "Selecting Terraform workspace..."
             sh '''
               terraform workspace new ${ENVIRONMENT} || terraform workspace select ${ENVIRONMENT}
-              terraform plan -out=${TF_PLAN_FILE}
+              terraform plan -out=${TF_PLAN_FILE} -input=false
               terraform show -json ${TF_PLAN_FILE} > plan.json
             '''
           }
@@ -82,9 +85,7 @@ pipeline {
     }
 
     stage('Approval for Production Apply') {
-      when {
-        expression { params.RUN_APPLY && params.ENVIRONMENT == 'prod' }
-      }
+      when { expression { params.RUN_APPLY && params.ENVIRONMENT == 'prod' } }
       steps {
         input message: "Approve Terraform APPLY for PRODUCTION?"
       }
@@ -95,8 +96,9 @@ pipeline {
       steps {
         lock(resource: "tf-${params.ENVIRONMENT}") {
           dir(env.TF_FOLDER) {
+            echo "Applying Terraform plan..."
             sh '''
-              terraform apply -auto-approve ${TF_PLAN_FILE}
+              terraform apply -auto-approve -input=false ${TF_PLAN_FILE}
             '''
           }
         }
@@ -105,16 +107,13 @@ pipeline {
 
     stage('Destroy (Gated)') {
       when { expression { params.RUN_DESTROY } }
-
       steps {
-        script {
-          input message: "CONFIRM DESTROY for ${params.ENVIRONMENT}?"
-        }
-
+        script { input message: "CONFIRM DESTROY for ${params.ENVIRONMENT}?" }
         lock(resource: "tf-${params.ENVIRONMENT}") {
           dir(env.TF_FOLDER) {
+            echo "Destroying Terraform resources..."
             sh '''
-              terraform destroy -auto-approve
+              terraform destroy -auto-approve -input=false
             '''
           }
         }
@@ -124,16 +123,14 @@ pipeline {
 
   post {
     always {
+      echo "Cleaning up environment variables..."
       sh '''
         unset AWS_ACCESS_KEY_ID || true
         unset AWS_SECRET_ACCESS_KEY || true
         unset AWS_SESSION_TOKEN || true
       '''
     }
-    success { echo "Completed for ${params.ENVIRONMENT}" }
+    success { echo "Pipeline completed successfully for ${params.ENVIRONMENT}" }
     failure { echo "Pipeline failed. Check logs." }
   }
 }
-
-
-
