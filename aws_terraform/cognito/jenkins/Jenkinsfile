@@ -48,17 +48,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Print AWS Credentials (Debug Stage)') {
-            steps {
-                script {
-                    echo "AWS_ACCESS_KEY_ID: ${env.AWS_ACCESS_KEY_ID}"
-                    echo "AWS_SECRET_ACCESS_KEY: ${env.AWS_SECRET_ACCESS_KEY?.take(4)}********"
-                    echo "AWS_SESSION_TOKEN: ${env.AWS_SESSION_TOKEN?.take(4)}********"
-        }
-    }
-}
-
         stage('Format & Validate') {
             steps {
                 dir(env.TF_FOLDER) {
@@ -102,6 +91,9 @@ pipeline {
         stage('Apply') {
             when { expression { params.RUN_APPLY && !params.RUN_DESTROY } }
             steps {
+                script {
+                    input message: "CONFIRM APPLY for ${params.ENVIRONMENT}?"
+                }
                 dir(env.TF_FOLDER) {
                     echo "Applying Terraform plan..."
                     sh '''
@@ -124,27 +116,15 @@ pipeline {
                 }
             }
         }
-
-        stage('Confirm Before Cleanup') {        // << NEW STAGE
-            steps {
-                script {
-                    input message: "Proceed to unset AWS credentials?"
-                }
-            }
-        }
     }
 
     post {
         always {
             echo "Cleaning up environment variables..."
-            sh '''
-                unset AWS_ACCESS_KEY_ID || true
-                unset AWS_SECRET_ACCESS_KEY || true
-                unset AWS_SESSION_TOKEN || true
-            '''
         }
         success { echo "Pipeline completed successfully for ${params.ENVIRONMENT}" }
         failure { echo "Pipeline failed. Check logs." }
     }
 }
+
 
