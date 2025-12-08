@@ -1,12 +1,20 @@
 terraform {
   required_version = ">= 1.0"
+
+  backend "s3" {
+    bucket = "testing-epa-application-bucket19112025"
+    key    = "cognito-identity-setup/dev/terraform.tfstate"
+    region = "ap-south-1"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"   # UPDATED due to lock file conflict
     }
   }
 }
+
 
 variable "kinesis_stream_arn" {
   default = "arn:aws:kinesis:ap-south-1:282526987315:stream/testing-epa-app"
