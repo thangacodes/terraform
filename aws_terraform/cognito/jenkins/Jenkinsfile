@@ -1,6 +1,6 @@
 pipeline {
 
-  agent { label any }  
+  agent any 
 
   options {
     buildDiscarder(logRotator(numToKeepStr: '3'))
@@ -156,3 +156,4 @@ pipeline {
     failure { echo "Pipeline failed. Check logs." }
   }
 }
+
