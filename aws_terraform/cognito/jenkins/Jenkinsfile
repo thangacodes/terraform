@@ -49,6 +49,16 @@ pipeline {
             }
         }
 
+        stage('Print AWS Credentials (Debug Stage)') {
+            steps {
+                script {
+                    echo "AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}"
+                    echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY.take(4)}"
+                    echo "AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN.take(4)}"
+                }
+            }
+        }
+
         stage('Format & Validate') {
             steps {
                 dir(env.TF_FOLDER) {
@@ -71,18 +81,14 @@ pipeline {
 
         stage('Plan') {
             steps {
-                // Optional: Remove lock if Locks and Latches plugin is not installed
-                // lock(resource: "tf-${params.ENVIRONMENT}") {
                 dir(env.TF_FOLDER) {
-                    echo "Selecting Terraform workspace and planning..."
+                    echo "Running Terraform Plan (remote workspace via S3 backend)..."
                     sh '''
-                        terraform workspace new ${ENVIRONMENT} || terraform workspace select ${ENVIRONMENT}
                         terraform plan -out=${TF_PLAN_FILE} -input=false
                         terraform show -json ${TF_PLAN_FILE} > plan.json
                     '''
                 }
                 archiveArtifacts artifacts: "${env.TF_FOLDER}/plan.json"
-                // }
             }
         }
 
@@ -96,14 +102,12 @@ pipeline {
         stage('Apply') {
             when { expression { params.RUN_APPLY && !params.RUN_DESTROY } }
             steps {
-                // lock(resource: "tf-${params.ENVIRONMENT}") {
                 dir(env.TF_FOLDER) {
                     echo "Applying Terraform plan..."
                     sh '''
                         terraform apply -auto-approve -input=false ${TF_PLAN_FILE}
                     '''
                 }
-                // }
             }
         }
 
@@ -113,14 +117,19 @@ pipeline {
                 script {
                     input message: "CONFIRM DESTROY for ${params.ENVIRONMENT}?"
                 }
-                // lock(resource: "tf-${params.ENVIRONMENT}") {
                 dir(env.TF_FOLDER) {
-                    echo "Destroying Terraform resources..."
                     sh '''
                         terraform destroy -auto-approve -input=false
                     '''
                 }
-                // }
+            }
+        }
+
+        stage('Confirm Before Cleanup') {        // << NEW STAGE
+            steps {
+                script {
+                    input message: "Proceed to unset AWS credentials?"
+                }
             }
         }
     }
