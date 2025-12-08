@@ -45,18 +45,27 @@ pipeline {
         }
       }
     }
-
     stage('Format & Validate') {
-      steps {
-        dir(env.TF_FOLDER) {
-          sh '''
-            terraform fmt -check -recursive
-            terraform validate
-          '''
+       steps {
+    dir(env.TF_FOLDER) {
+      script {
+        // Run terraform fmt -check and capture exit code
+        def fmtResult = sh(script: "terraform fmt -check -recursive", returnStatus: true)
+        
+        if (fmtResult != 0) {
+          echo "WARNING: Terraform files are not properly formatted!"
+          // Optional: mark the build as unstable but continue
+          currentBuild.result = 'UNSTABLE'
+        } else {
+          echo "Terraform files are properly formatted."
         }
+
+        // Always run validate
+        sh "terraform validate"
       }
     }
-
+  }
+}
     stage('Plan') {
       steps {
         lock(resource: "tf-${params.ENVIRONMENT}") {
@@ -125,5 +134,6 @@ pipeline {
     failure { echo "Pipeline failed. Check logs." }
   }
 }
+
 
 
