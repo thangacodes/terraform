@@ -52,12 +52,12 @@ pipeline {
         stage('Print AWS Credentials (Debug Stage)') {
             steps {
                 script {
-                    echo "AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}"
-                    echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY.take(4)}"
-                    echo "AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN.take(4)}"
-                }
-            }
+                    echo "AWS_ACCESS_KEY_ID: ${env.AWS_ACCESS_KEY_ID}"
+                    echo "AWS_SECRET_ACCESS_KEY: ${env.AWS_SECRET_ACCESS_KEY?.take(4)}********"
+                    echo "AWS_SESSION_TOKEN: ${env.AWS_SESSION_TOKEN?.take(4)}********"
         }
+    }
+}
 
         stage('Format & Validate') {
             steps {
@@ -147,3 +147,4 @@ pipeline {
         failure { echo "Pipeline failed. Check logs." }
     }
 }
+
