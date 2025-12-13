@@ -1,0 +1,40 @@
+[jenkinsdeploy@jenkins ~]$ cat deploy.yml 
+- name: Application Deployment and Health Check
+  hosts: web
+  become: yes
+  gather_facts: no
+
+  vars:
+    artifact_name: "lms.war"
+    tomcat_webapps: "/opt/tomcat/webapps"
+    temp_dir: "/tmp"
+    healthcheck_script_dir: "/home/tomcat/dep_test"
+    s3_artifact_uri: "s3://gitops-demo-bucket-tf/artifact_files/"
+
+  tasks:
+    - name: Download artifact from S3
+      ansible.builtin.command:
+        cmd: >
+          aws s3 cp
+          "{{ s3_artifact_uri }}{{ artifact_name }}"
+          "{{ temp_dir }}/{{ artifact_name }}"
+
+    - name: Copy artifact to Tomcat webapps
+      ansible.builtin.copy:
+        src: "{{ temp_dir }}/{{ artifact_name }}"
+        dest: "{{ tomcat_webapps }}/{{ artifact_name }}"
+        remote_src: yes
+        owner: tomcat
+        mode: '0644'
+
+    - name: Run healthcheck script
+      become: no
+      become_user: tomcat
+      ansible.builtin.shell:
+        cmd: "bash healthcheck"
+        chdir: "{{ healthcheck_script_dir }}"
+
+    - name: Clean up downloaded artifact
+      ansible.builtin.file:
+        path: "{{ temp_dir }}/{{ artifact_name }}"
+        state: absent
