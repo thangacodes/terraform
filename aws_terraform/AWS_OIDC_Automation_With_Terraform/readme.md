@@ -35,13 +35,3 @@ Type `yes` or `y` to apply the Terraform changes, or any other key to skip.
 
 ---
 
-## Notes
-- The `null_resource` in Terraform is used to invoke the thumbprint fetch script if you want to run it via Terraform.
-- Terraform requires two apply steps if you want the dynamically fetched thumbprint to be used:
-  1. Run the `null_resource` target to generate/update `terraform.tfvars`.
-  2. Apply the OIDC provider resources using the updated variable.
-
----
-
-## License
-Specify your license here (e.g., MIT, Apache 2.0)
