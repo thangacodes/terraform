@@ -24,4 +24,6 @@ This configuration will:
 terraform {
   required_version = ">= 1.14.2, < 2.0.0"
 }
+```
+
 This ensures compatibility with Terraform v1.14.2 and later.
