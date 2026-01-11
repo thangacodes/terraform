@@ -17,6 +17,7 @@ TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
 curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
   http://169.254.169.254/latest/meta-data/iam/info \
   > /tmp/profile_info.txt
-
+# Checking whether the S3 buckets are accessible from the Private VM.
+aws s3 ls 
 echo "User-data completed at $(date '+%Y-%m-%d %H:%M:%S')"
 exit 0
