@@ -1,4 +1,4 @@
-# Terraform AWS Infrastructure
+# Configuring a VPC Gateway Endpoint for Private S3 Access
 
 This repository contains Terraform scripts along with Bash scripts to automate the creation of AWS infrastructure.
 
